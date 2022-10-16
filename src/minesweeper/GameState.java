@@ -133,8 +133,8 @@ public class GameState {
         Cell next_cell;
         while ((next = queue.poll()) != null) {
             visited[next.y][next.x] = true;
-            next_cell = this.board[next.y][next.x];
             uncover(next.x, next.y);
+            next_cell = this.board[next.y][next.x];
             if (next_cell.getNumber() == 0) {
                 int new_x, new_y;
                 // Iterate over surrounding cells
@@ -144,7 +144,10 @@ public class GameState {
                         new_y = next.y + j;
                         if ( 0 <= new_x && new_x < this.grid_size_x
                         && 0 <= new_y && new_y < this.grid_size_y ) {
-                            if (i + j != 0 && !visited[new_y][new_x]) {
+                            if (i == 0 && j == 0) {
+                                continue;
+                            }
+                            if (!visited[new_y][new_x]) {
                                 queue.add(new Coord(new_x, new_y));
                             }
                         }
