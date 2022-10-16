@@ -91,7 +91,9 @@ public class Board extends JPanel {
             int cell_y = e.getY() / cell_size;
             switch (e.getButton()) {
                 case BUTTON1:
-                    state.try_uncover(cell_x, cell_y);
+                    if (!state.board[cell_y][cell_x].isFlagged()) {
+                        state.try_uncover(cell_x, cell_y);
+                    }
                     break;
                 case BUTTON3:
                     state.board[cell_y][cell_x].toggleFlagged();
