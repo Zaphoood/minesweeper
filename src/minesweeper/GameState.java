@@ -53,7 +53,7 @@ class Coord {
 }
 
 public class GameState {
-    public ArrayList<ArrayList<Cell>> board = new ArrayList<>();
+    public Cell[][] board;
     private int n_covered;
     int grid_size_x;
     int grid_size_y;
@@ -89,14 +89,11 @@ public class GameState {
             }
         }
 
+        board = new Cell[this.grid_size_y][this.grid_size_x];
         for (int i = 0; i < this.grid_size_x; i++) {
-            board.add(new ArrayList<Cell>());
-            ArrayList<Cell> current_row = board.get(board.size() - 1);
-
             for (int j = 0; j < this.grid_size_y; j++) {
-
                 if (bombs[j][i] > 0) {
-                    current_row.add(new BombCell());
+                    board[j][i] = new BombCell();
                 } else {
                     // Calculate number of bombs surrounding the cell
                     int n_surrounding_bombs = 0;
@@ -105,14 +102,14 @@ public class GameState {
                             n_surrounding_bombs += bombs[l][k];
                         }
                     }
-                    current_row.add(new NumberCell(n_surrounding_bombs, true));
+                    board[j][i] = new NumberCell(n_surrounding_bombs, true);
                 }
             }
         }
     }
 
     public boolean try_uncover(int x, int y) {
-        if (this.board.get(y).get(x).isBomb()) {
+        if (this.board[y][x].isBomb()) {
             this.mode = Mode.GameOver;
             System.out.println("bomb!");
             return false;
@@ -124,7 +121,7 @@ public class GameState {
     }
 
     private void uncover(int x, int y) {
-        this.board.get(y).get(x).uncover();
+        this.board[y][x].uncover();
         this.n_covered -= 1;
     }
 
@@ -136,7 +133,7 @@ public class GameState {
         Cell next_cell;
         while ((next = queue.poll()) != null) {
             visited[next.y][next.x] = true;
-            next_cell = this.board.get(next.y).get(next.x);
+            next_cell = this.board[next.y][next.x];
             uncover(next.x, next.y);
             if (next_cell.getNumber() == 0) {
                 int new_x, new_y;

@@ -57,7 +57,7 @@ public class Board extends JPanel {
     private void drawCells(Graphics2D g2d) {
         for (int x = 0; x < this.state.grid_size_x; x++) {
             for (int y = 0; y < this.state.grid_size_y; y++) {
-                Cell cell = this.state.board.get(y).get(x);
+                Cell cell = this.state.board[y][x];
                 if (cell.isCovered()) {
                     g2d.setColor(Color.gray);
                     g2d.fillRect(x * this.cell_size, y * this.cell_size, this.cell_size, this.cell_size);
