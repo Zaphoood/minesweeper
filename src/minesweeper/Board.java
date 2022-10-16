@@ -15,7 +15,7 @@ public class Board extends JPanel {
         this.grid_size_pixel_x = state.grid_size_x * cell_size;
         this.grid_size_pixel_y = state.grid_size_y * cell_size;
 
-        setPreferredSize(new Dimension(500, 500));
+        setPreferredSize(new Dimension(this.grid_size_pixel_x, this.grid_size_pixel_y));
 
         addMouseListener(new MyMouseListener());
         setFocusable(true);
