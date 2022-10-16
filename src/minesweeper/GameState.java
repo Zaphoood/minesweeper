@@ -75,6 +75,10 @@ public class GameState {
     // It would make more sense to call this 'game_state' or something similar, but that's already
     // the name of the class, so I think that would be even more confusing
     private Mode mode = Mode.Uninitialized;
+    // When the first cell is requested to be uncovered, the board is shuffle partially so that
+    // the first uncovered cell is not a bomb. This is used to store whether the first uncovering has
+    // been performed yet.
+    private boolean first_uncover = true;
 
     GameState(int size_x, int size_y, int n_bombs) {
         this.grid_size_x = size_x;
@@ -86,14 +90,26 @@ public class GameState {
 
     public void reset() {
         this.n_covered = this.grid_size_x * this.grid_size_y;
-        generateBoard(n_bombs);
         mode = Mode.Running;
+        generateEmptyBoard();
+        this.first_uncover = true;
     }
 
     public Mode getMode() {
         return this.mode;
     }
-    private void generateBoard(int n_bombs) {
+
+    /* The point at (safe_x, safe_y) shall not contain a bomb */
+    private void generateEmptyBoard() {
+        board = new Cell[this.grid_size_y][this.grid_size_x];
+        for (int i = 0; i < this.grid_size_x; i++) {
+            for (int j = 0; j < this.grid_size_x; j++) {
+                this.board[j][i] = new NumberCell(1, true);
+            }
+        }
+
+    }
+    private void generateBoard(int safe_x, int safe_y) {
         assert n_bombs <= this.grid_size_x * this.grid_size_y;
 
         Random rand = new Random();
@@ -104,6 +120,18 @@ public class GameState {
                 int y = rand.nextInt(this.grid_size_y);
                 if (bombs[y][x] == 0) {
                     bombs[y][x] = 1;
+                    break;
+                }
+            }
+        }
+
+        if (bombs[safe_y][safe_x] == 1) {
+            while (true) {
+                int x = rand.nextInt(this.grid_size_x);
+                int y = rand.nextInt(this.grid_size_y);
+                if (x != safe_x && y != safe_y && bombs[y][x] == 0) {
+                    bombs[y][x] = 1;
+                    bombs[safe_y][safe_x] = 0;
                     break;
                 }
             }
@@ -129,6 +157,10 @@ public class GameState {
     }
 
     public boolean try_uncover(int x, int y) {
+        if (this.first_uncover) {
+            this.first_uncover = false;
+            generateBoard(x, y);
+        }
         if (this.board[y][x].isBomb()) {
             this.mode = Mode.GameOver;
             return false;
