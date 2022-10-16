@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.awt.geom.Line2D;
 import javax.swing.JPanel;
 
+import static java.awt.event.MouseEvent.*;
+
 public class Board extends JPanel {
     private GameState state;
     final int cell_size = 50;
@@ -61,6 +63,14 @@ public class Board extends JPanel {
                 if (cell.isCovered()) {
                     g2d.setColor(Color.gray);
                     g2d.fillRect(x * this.cell_size, y * this.cell_size, this.cell_size, this.cell_size);
+                    if (cell.isFlagged()) {
+                        g2d.setColor(Color.red);
+                        g2d.fillRect(
+                                (int)((x + 0.25) * this.cell_size),
+                                (int)((y + 0.25) * this.cell_size),
+                                (int)(this.cell_size * 0.5),
+                                (int)(this.cell_size * 0.5));
+                    }
                 } else if (cell.getNumber() > 0) {
                     // Draw number
                     g2d.setColor(Color.black);
@@ -79,7 +89,14 @@ public class Board extends JPanel {
         public void mousePressed(MouseEvent e) {
             int cell_x = e.getX() / cell_size;
             int cell_y = e.getY() / cell_size;
-            state.try_uncover(cell_x, cell_y);
+            switch (e.getButton()) {
+                case BUTTON1:
+                    state.try_uncover(cell_x, cell_y);
+                    break;
+                case BUTTON3:
+                    state.board[cell_y][cell_x].toggleFlagged();
+                    break;
+            }
         }
 
         @Override

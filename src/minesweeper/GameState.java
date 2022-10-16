@@ -8,6 +8,7 @@ class Cell {
     private int number;
     private boolean bomb;
     private boolean covered;
+    private boolean flagged = false;
 
     Cell(int number, boolean bomb, boolean covered) {
         this.number = number;
@@ -29,6 +30,13 @@ class Cell {
 
     void uncover() {
         this.covered = false;
+    }
+
+    boolean isFlagged() {
+        return this.flagged;
+    }
+    void toggleFlagged() {
+        this.flagged = !this.flagged;
     }
 }
 
