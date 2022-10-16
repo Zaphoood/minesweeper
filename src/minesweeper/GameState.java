@@ -130,7 +130,6 @@ public class GameState {
 
     private void uncover_adjacent_empty_cells(int x, int y) {
         LinkedList<Coord> queue = new LinkedList<>();
-        ArrayList<Coord> adjacent_numbers = new ArrayList<>(); // Store uncovered cells for later
         queue.add(new Coord(x, y));
         boolean[][] visited = new boolean[grid_size_y][grid_size_x];
         Coord next;
