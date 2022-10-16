@@ -79,12 +79,20 @@ public class GameState {
     GameState(int size_x, int size_y, int n_bombs) {
         this.grid_size_x = size_x;
         this.grid_size_y = size_y;
-        this.n_covered = size_x * size_y;
         this.n_bombs = n_bombs;
+
+        reset();
+    }
+
+    public void reset() {
+        this.n_covered = this.grid_size_x * this.grid_size_y;
         generateBoard(n_bombs);
         mode = Mode.Running;
     }
 
+    public Mode getMode() {
+        return this.mode;
+    }
     private void generateBoard(int n_bombs) {
         assert n_bombs <= this.grid_size_x * this.grid_size_y;
 
@@ -123,7 +131,6 @@ public class GameState {
     public boolean try_uncover(int x, int y) {
         if (this.board[y][x].isBomb()) {
             this.mode = Mode.GameOver;
-            System.out.println("bomb!");
             return false;
         } else {
             uncover_adjacent_empty_cells(x, y);

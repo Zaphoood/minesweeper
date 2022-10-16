@@ -6,6 +6,7 @@ import java.awt.geom.Line2D;
 import javax.swing.JPanel;
 
 import static java.awt.event.MouseEvent.*;
+import static minesweeper.GameState.Mode.Running;
 
 public class Board extends JPanel {
     private GameState state;
@@ -40,6 +41,14 @@ public class Board extends JPanel {
         drawCells(g2d);
         drawGrid(g2d);
 
+        switch (this.state.getMode()) {
+            case GameOver:
+                drawGameOver(g2d);
+                break;
+            case Won:
+                drawWon(g2d);
+                break;
+        }
         repaint();
     }
 
@@ -84,6 +93,30 @@ public class Board extends JPanel {
         }
     }
 
+    private void drawWon(Graphics2D g2d) {
+        drawTextOverlay(g2d, "You won!");
+    }
+
+    private void drawGameOver(Graphics2D g2d) {
+        drawTextOverlay(g2d, "Game Over");
+    }
+    private void drawTextOverlay(Graphics2D g2d, String text) {
+        g2d.setStroke(new BasicStroke(1));
+        int width = 250;
+        int height = 80;
+        int x = (int) (grid_size_pixel_x / 2 - width / 2);
+        int y = (int) (grid_size_pixel_y / 2 - height / 2);
+        g2d.setPaint(Color.gray);
+        g2d.fillRect(x, y, width, height);
+        g2d.setColor(Color.black);
+        g2d.drawRect(x, y, width, height);
+
+        g2d.setColor(Color.black);
+        g2d.drawString(text,
+            (int)(grid_size_pixel_x / 2 - g2d.getFontMetrics().stringWidth(text) / 2),
+         (int)(grid_size_pixel_y / 2 + g2d.getFontMetrics().getHeight() / 2) - 10);
+    }
+
     class MyMouseListener implements MouseListener {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -91,8 +124,16 @@ public class Board extends JPanel {
             int cell_y = e.getY() / cell_size;
             switch (e.getButton()) {
                 case BUTTON1:
-                    if (!state.board[cell_y][cell_x].isFlagged()) {
-                        state.try_uncover(cell_x, cell_y);
+                    switch (state.getMode()) {
+                        case Running:
+                            if (!state.board[cell_y][cell_x].isFlagged()) {
+                                state.try_uncover(cell_x, cell_y);
+                            }
+                            break;
+                        case GameOver:
+                        case Won:
+                            // Restart game
+                            state.reset();
                     }
                     break;
                 case BUTTON3:
