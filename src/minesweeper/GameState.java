@@ -63,11 +63,13 @@ class Coord {
 public class GameState {
     public Cell[][] board;
     private int n_covered;
+    private int n_bombs;
     int grid_size_x;
     int grid_size_y;
     enum Mode {
         Uninitialized,
         Running,
+        Won,
         GameOver
     }
     // It would make more sense to call this 'game_state' or something similar, but that's already
@@ -77,12 +79,14 @@ public class GameState {
     GameState(int size_x, int size_y, int n_bombs) {
         this.grid_size_x = size_x;
         this.grid_size_y = size_y;
+        this.n_covered = size_x * size_y;
+        this.n_bombs = n_bombs;
         generateBoard(n_bombs);
         mode = Mode.Running;
     }
 
     private void generateBoard(int n_bombs) {
-         assert n_bombs <= this.grid_size_x * this.grid_size_y;
+        assert n_bombs <= this.grid_size_x * this.grid_size_y;
 
         Random rand = new Random();
         int[][] bombs = new int[this.grid_size_y][this.grid_size_x];
@@ -124,13 +128,19 @@ public class GameState {
         } else {
             uncover_adjacent_empty_cells(x, y);
             uncover(x, y);
+            if (this.n_covered == this.n_bombs) {
+                this.mode = Mode.Won;
+                System.out.println("You won!");
+            }
             return true;
         }
     }
 
     private void uncover(int x, int y) {
+        if (this.board[y][x].isCovered()) {
+            this.n_covered -= 1;
+        }
         this.board[y][x].uncover();
-        this.n_covered -= 1;
     }
 
     private void uncover_adjacent_empty_cells(int x, int y) {
