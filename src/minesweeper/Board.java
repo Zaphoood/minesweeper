@@ -59,7 +59,7 @@ public class Board extends JPanel {
             Line2D line = new Line2D.Double(x * this.cell_size, 0, x * this.cell_size, this.grid_size_pixel_y);
             g2d.draw(line);
         }
-        for (int y = 1; y < this.state.grid_size_x; y++) {
+        for (int y = 1; y < this.state.grid_size_y; y++) {
             Line2D line = new Line2D.Double(0, y * this.cell_size, this.grid_size_pixel_x, y * this.cell_size);
             g2d.draw(line);
         }

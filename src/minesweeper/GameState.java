@@ -103,7 +103,7 @@ public class GameState {
     private void generateEmptyBoard() {
         board = new Cell[this.grid_size_y][this.grid_size_x];
         for (int i = 0; i < this.grid_size_x; i++) {
-            for (int j = 0; j < this.grid_size_x; j++) {
+            for (int j = 0; j < this.grid_size_y; j++) {
                 this.board[j][i] = new NumberCell(1, true);
             }
         }
